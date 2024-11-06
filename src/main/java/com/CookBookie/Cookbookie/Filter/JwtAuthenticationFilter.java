@@ -20,6 +20,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsImp userDetailsService;
+    public static String CURRENT_USER = "";
 
 
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsImp userDetailsService) {
@@ -43,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
         String username = jwtService.extractUsername(token);
+        CURRENT_USER = username;
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 

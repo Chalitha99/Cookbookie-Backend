@@ -49,7 +49,7 @@ public class AuthenticationService {
             user.setName(request.getName());
             user.setUsername(request.getUsername());
             user.setPhone(request.getPhone());
-            user.setRole(request.getRole());
+            user.setRole("USER");
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user = userRepo.save(user);
 
