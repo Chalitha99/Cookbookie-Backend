@@ -36,6 +36,8 @@ public class User implements UserDetails {
 
     private String role;
 
+    private String imgPath;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
