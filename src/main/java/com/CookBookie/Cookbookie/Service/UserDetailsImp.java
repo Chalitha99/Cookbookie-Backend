@@ -1,5 +1,6 @@
 package com.CookBookie.Cookbookie.Service;
 
+import com.CookBookie.Cookbookie.Model.User;
 import com.CookBookie.Cookbookie.Repository.UserRepo;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,4 +21,5 @@ public class UserDetailsImp implements UserDetailsService {
                 new UsernameNotFoundException("User not found")
         );
     }
+
 }

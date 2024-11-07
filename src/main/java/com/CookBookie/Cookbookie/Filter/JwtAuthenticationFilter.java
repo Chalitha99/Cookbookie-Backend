@@ -20,7 +20,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsImp userDetailsService;
-    public static String CURRENT_USER = "";
+    public  static String CURRENT_USER = "";
 
 
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsImp userDetailsService) {
