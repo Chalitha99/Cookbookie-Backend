@@ -1,6 +1,7 @@
 package com.CookBookie.Cookbookie.Config;
 import com.CookBookie.Cookbookie.Filter.JwtAuthenticationFilter;
 import com.CookBookie.Cookbookie.Service.UserDetailsImp;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -89,6 +90,11 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);  // Apply CORS settings to all endpoints
         return source;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
 
