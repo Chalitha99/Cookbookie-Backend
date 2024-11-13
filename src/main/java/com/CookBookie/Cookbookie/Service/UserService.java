@@ -25,6 +25,14 @@ public class UserService {
 
     }
 
+    public User getUserAsModel(String username) {
+        User selectedUser = userRepo.findByUsername(username).orElse(null);
+        return selectedUser;
+
+    }
+
+
+
 
     public UserDTO updateUser(UserDTO userDTO, String userID) {
 //        User user = userRepo.findById(userID).orElse(null);

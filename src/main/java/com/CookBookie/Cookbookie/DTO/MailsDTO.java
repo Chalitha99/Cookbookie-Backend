@@ -12,6 +12,6 @@ public class MailsDTO {
 
     private String toMail;
     private String subject;
-    private String body;
+    private String message;
 
 }
