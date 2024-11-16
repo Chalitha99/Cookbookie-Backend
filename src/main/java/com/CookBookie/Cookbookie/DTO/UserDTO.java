@@ -25,5 +25,5 @@ public class UserDTO {
 
         private String role;
 
-        private String imgPath;
+        private byte[] imgPath;
 }

@@ -1,7 +1,9 @@
 package com.CookBookie.Cookbookie.Controller;
 import com.CookBookie.Cookbookie.DTO.UserDTO;
 import com.CookBookie.Cookbookie.Filter.JwtAuthenticationFilter;
+import com.CookBookie.Cookbookie.Model.Reviews;
 import com.CookBookie.Cookbookie.Model.User;
+import com.CookBookie.Cookbookie.Repository.ReviewRepo;
 import com.CookBookie.Cookbookie.Repository.UserRepo;
 
 import com.CookBookie.Cookbookie.Service.UserService;
@@ -17,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private ReviewRepo reviewRepo;
 
     @Autowired
     private  UserService userService;
@@ -51,6 +56,15 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
         userRepo.deleteById(id);
         return ResponseEntity.ok("User deleted successfully");
+    }
+
+    @PostMapping("/addReview")
+    public ResponseEntity<?> addReview(@RequestBody Reviews reviews) {
+        String currentUser = JwtAuthenticationFilter.CURRENT_USER;
+        User user = userService.getUserAsModel(currentUser);
+        reviews.setUser(user);
+        reviewRepo.save(reviews);
+        return ResponseEntity.ok("Reviews added Successfully");
     }
 
 }
