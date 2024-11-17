@@ -6,11 +6,14 @@ import com.CookBookie.Cookbookie.Model.User;
 import com.CookBookie.Cookbookie.Repository.ReviewRepo;
 import com.CookBookie.Cookbookie.Repository.UserRepo;
 
+import com.CookBookie.Cookbookie.Service.FileUploadUtil;
 import com.CookBookie.Cookbookie.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
+import java.io.IOException;
+import java.util.*;
 
 
 @RestController
@@ -24,8 +27,10 @@ public class UserController {
     private ReviewRepo reviewRepo;
 
     @Autowired
-    private  UserService userService;
+    private UserService userService;
 
+    @Autowired
+    private FileUploadUtil fileUploadUtil;
 
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody User user) {
@@ -39,7 +44,6 @@ public class UserController {
     }
 
 
-
     @GetMapping("/getUser")
     public UserDTO getUser() {
         String currentUser = JwtAuthenticationFilter.CURRENT_USER; // Retrieve the current user from JWT
@@ -47,8 +51,8 @@ public class UserController {
     }
 
     @PutMapping("/updateUser/{userID}")
-    public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO , @PathVariable String userID) {
-        userService.updateUser(userDTO,userID);
+    public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO, @PathVariable String userID) {
+        userService.updateUser(userDTO, userID);
         return ResponseEntity.ok("User updated successfully");
     }
 
@@ -66,5 +70,26 @@ public class UserController {
         reviewRepo.save(reviews);
         return ResponseEntity.ok("Reviews added Successfully");
     }
+
+    @GetMapping("/reviewList")
+    public List<Map<String, Object>> getAllReviews() throws IOException {
+        List<Reviews> reviewList = reviewRepo.findAll();
+        List<Map<String, Object>> reviewsWithUserImage = new ArrayList<>();
+
+        for (Reviews review : reviewList) {
+
+            User user = review.getUser();
+
+            Map<String, Object> reviewWithUser = new HashMap<>();
+            reviewWithUser.put("review", review);
+            reviewWithUser.put("userImage", fileUploadUtil.getImageData(user.getImgPath()));  // Assuming imgPath is a byte array
+            reviewWithUser.put("name",user.getName());
+            reviewsWithUserImage.add(reviewWithUser);
+
+        }
+
+        return reviewsWithUserImage;
+    }
+
 
 }
