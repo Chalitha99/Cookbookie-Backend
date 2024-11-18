@@ -1,11 +1,14 @@
 package com.CookBookie.Cookbookie.Controller;
 
+import com.CookBookie.Cookbookie.DTO.RecipeDTO;
 import com.CookBookie.Cookbookie.Filter.JwtAuthenticationFilter;
 import com.CookBookie.Cookbookie.Model.Recipes;
+import com.CookBookie.Cookbookie.Model.Reviews;
 import com.CookBookie.Cookbookie.Model.User;
 import com.CookBookie.Cookbookie.Repository.RecipeRepo;
 import com.CookBookie.Cookbookie.Service.FileUploadUtil;
 import com.CookBookie.Cookbookie.Service.UserService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,7 +17,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 @RequestMapping("/recipe")
@@ -30,30 +34,6 @@ public class RecipeController {
     @Autowired
     private UserService userService;
 
-//    @PostMapping("/addRecipe")
-//    public ResponseEntity<?> addRecipe(@RequestBody Recipes recipes ,
-//                                       @RequestParam("recipeImg") MultipartFile recipeImg)
-//    {
-//        String currentUser = JwtAuthenticationFilter.CURRENT_USER;
-//        User user = userService.getUserAsModel(currentUser);
-//
-//        String uploadDir = "RecipeImageFolder";
-//        String fileName = StringUtils.cleanPath(Objects.requireNonNull(recipeImg.getOriginalFilename()));
-//
-//        try {
-//            String filePath = fileUploadUtil.saveRecipeImg(uploadDir, fileName, recipeImg);
-//            recipes.setImgPath(filePath);
-//            recipes.setUser(user);
-//            recipeRepo.save(recipes);
-//            return ResponseEntity.ok("Recipe added successfully");
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("Failed to upload recipe image and details.");
-//        }
-//
-//    }
 
     @PostMapping(value = "/addRecipe")
     public ResponseEntity<?> addRecipe(
@@ -91,6 +71,51 @@ public class RecipeController {
         }
     }
 
+    @GetMapping("/myRecipes")
+    public List<RecipeDTO> getMyRecipes() throws IOException {
 
+        List<RecipeDTO>  recipeDTOList = new ArrayList<>();
+        String currentUser = JwtAuthenticationFilter.CURRENT_USER;
+        User user = userService.getUserAsModel(currentUser);
+        String userId = user.getId();
+
+        ObjectId userObjectId = new ObjectId(userId);
+        List<Recipes> recipeList= recipeRepo.findByUser(userObjectId);
+
+        for (Recipes recipe : recipeList) {
+            RecipeDTO recipeDTO = new RecipeDTO();
+            recipeDTO.setFoodName(recipe.getFoodName());
+            recipeDTO.setIngredients(recipe.getIngredients());
+            recipeDTO.setCategory(recipe.getCategory());
+            recipeDTO.setDescription(recipe.getDescription());
+            recipeDTO.setId(recipe.getId());
+            recipeDTO.setImgPath(fileUploadUtil.getImageData(recipe.getImgPath()));
+
+            recipeDTOList.add(recipeDTO);
+        }
+    return recipeDTOList;
+
+    }
+
+    @GetMapping("/allRecipes")
+    public List<RecipeDTO> getAllRecipes() throws IOException {
+
+        List<RecipeDTO> recipeDTOList = new ArrayList<>();
+        List<Recipes> recipeList= recipeRepo.findAll();
+
+        for (Recipes recipe : recipeList) {
+            RecipeDTO recipeDTO = new RecipeDTO();
+            recipeDTO.setFoodName(recipe.getFoodName());
+            recipeDTO.setIngredients(recipe.getIngredients());
+            recipeDTO.setCategory(recipe.getCategory());
+            recipeDTO.setDescription(recipe.getDescription());
+            recipeDTO.setId(recipe.getId());
+            recipeDTO.setImgPath(fileUploadUtil.getImageData(recipe.getImgPath()));
+
+            recipeDTOList.add(recipeDTO);
+        }
+        return recipeDTOList;
+
+    }
 
 }
